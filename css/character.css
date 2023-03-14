@@ -16,6 +16,12 @@ section {
     height: 100vh;
     margin: auto;
 
-    background: url(../img/character2.png) bottom repeat-x #333;
+    background: url(../img/character2.png) center 80% repeat-x #333;
     background-size: 100%;
+}
+
+@media screen and (max-width: 1400px) {
+    section {
+        background-position: center center;
+    }
 }
