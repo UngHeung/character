@@ -1,0 +1,167 @@
+/* ===== input-section */
+.input-section {
+    padding: 31px 27px;
+}
+
+/* item-list */
+.items-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    margin-bottom: var(--gap-cont);
+}
+
+.items-list>li>button {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 94px;
+    height: 130px;
+    padding: 5px 0;
+
+    border-radius: 10px;
+    outline: 1px solid #B5B5B6;
+
+    text-align: center;
+    box-shadow: var(--shadow-button);
+}
+
+.items-list>li>button:not(:disabled):active {
+    outline: 3px solid var(--color-main);
+}
+
+.items-list>li>button>span {
+    display: block;
+    width: 70px;
+    height: 22px;
+
+    background-color: var(--color-main);
+    border-radius: 50px;
+
+    color: white;
+    line-height: 22px;
+}
+
+/* soldout */
+.soldout {
+    position: relative;
+}
+
+.soldout::after {
+    content: url(../images/sold_out.png);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 94px;
+    height: 130px;
+
+    background-color: rgba(0, 0, 0, .8);
+    border-radius: 10px;
+
+    line-height: 180px;
+}
+
+/* ===== slot-wrapper */
+.slot-wrapper>section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: var(--gap-item);
+}
+
+/* slot left side */
+.slot-change>span,
+.slot-insert>input {
+    width: 200px;
+    height: 33px;
+    padding: 0 10px;
+
+    border-radius: 5px;
+}
+
+/* slot right side */
+.slot-wrapper>section button {
+    width: 94px;
+    height: 33px;
+
+    border-radius: 5px;
+    box-shadow: var(--shadow-button);
+
+    font-size: var(--ft-size-button);
+    font-weight: 500;
+    text-align: center;
+}
+
+/* slot-change */
+.slot-change>span {
+    position: relative;
+
+    background-color: var(--color-display);
+
+    font-size: var(--ft-size-info);
+    text-align: right;
+    line-height: 33px;
+}
+
+.slot-change>span::before {
+    content: "잔액 :";
+    position: absolute;
+    left: 10px;
+}
+
+.slot-change>span::after {
+    content: "원";
+    margin-left: 3px;
+}
+
+/* slot-insert */
+.slot-insert>input {
+    border: 1px solid var(--color-lgray);
+
+    font-size: var(--ft-size-button);
+}
+
+.slot-insert>input:placeholder {
+    color: var(--color-lgray);
+    font-weight: 500;
+}
+
+/* ===== select wrapper */
+.select-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.select-list {
+    width: 200px;
+    height: 106px;
+
+    background-color: var(--color-display);
+    border-radius: 5px;
+    border: 1px solid var(--color-lgray);
+}
+
+.select-list>li>button {
+    width: 170px;
+}
+
+.select-list .item-name {
+    margin-right: 10px;
+}
+
+.get-button {
+    width: 97px;
+    height: 106px;
+
+    background-color: var(--color-main);
+    border-radius: 5px;
+    box-shadow: var(--shadow-button);
+
+    font-size: var(--ft-size-button);
+    font-weight: 500;
+    color: white;
+    text-align: center;
+}

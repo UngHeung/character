@@ -1,0 +1,181 @@
+/* ===== root */
+:root {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+
+    background-color: #EAE8FE;
+
+    --ft-size-info: 14px;
+    --ft-size-button: 13px;
+    --ft-size-name: 9px;
+
+    --color-main: #6327FE;
+    --color-display: #EAE8FE;
+    --color-lgray: #BDBDBD;
+
+    --gap-cont: 20px;
+    --gap-item: 12px;
+    --gap-list: 9px;
+
+    --shadow-button: 0 0 4px rgba(0, 0, 0, .5);
+}
+
+* {
+    padding: 0;
+    margin: 0;
+
+    box-sizing: border-box;
+}
+
+/* ===== reset */
+li {
+    list-style: none;
+}
+
+button,
+input {
+    all: unset;
+    box-sizing: inherit;
+}
+
+button:not(:disabled) {
+    cursor: pointer;
+}
+
+img {
+    vertical-align: bottom;
+}
+
+strong {
+    all: unset;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: white;
+    background-clip: padding-box;
+
+    border-top: 10px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+
+.hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    font-size: 1px;
+    overflow: hidden;
+}
+
+/* ===== header */
+.main-header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.main-header>img {
+    max-width: 386px;
+}
+
+/* ===== main > section, article */
+main {
+    max-width: 748px;
+    margin: 0 auto;
+
+    overflow: hidden;
+}
+
+main>section,
+main>article {
+    max-width: 360px;
+    margin: 0 auto;
+    background-color: white;
+}
+
+.input-section {
+    float: left;
+}
+
+.wallet {
+    float: right;
+}
+
+.output-section {
+    float: right;
+}
+
+/* select, dispenser list */
+.list-style {
+    padding: 12px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.list-style>li>button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 46px;
+    margin-bottom: 6px;
+    padding: 0 10px;
+
+    background-color: white;
+}
+
+.list-style>li>button>img {
+    width: 18px;
+    height: 33px;
+
+    object-fit: cover;
+}
+
+.list-style>li>button>span {
+    display: block;
+    width: 30px;
+    height: 30px;
+
+    border-radius: 5px;
+    border: 1px solid var(--color-lgray);
+
+    font-size: var(--ft-size-info);
+    font-weight: 700;
+    text-align: center;
+    line-height: 30px;
+}
+
+/* ===== media */
+@media screen and (max-width: 800px) {
+    :root {
+        background-color: white;
+    }
+
+    .main-header {
+        margin-bottom: 40px;
+    }
+
+    .main-header>img {
+        max-width: 50%;
+    }
+
+    main {
+        max-width: 80%;
+    }
+
+    .input-section,
+    .wallet,
+    .output-section {
+        width: 100%;
+        float: none;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    main {
+        max-width: 100%;
+    }
+}

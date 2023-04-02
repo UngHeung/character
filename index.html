@@ -5,13 +5,107 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>캐릭터</title>
-    <link rel="stylesheet" href="css/character.css">
+    <title>vending machine</title>
+    <link rel="stylesheet" href="CSS/common.css">
+    <link rel="stylesheet" href="CSS/left-side.css">
+    <link rel="stylesheet" href="CSS/right-side.css">
 </head>
 
 <body>
-    <h1>에렁이</h1>
-    <section></section>
+    <!-- top-header -->
+    <header class="main-header">
+        <img src="images/Logo.png" alt="Vending Machine logo">
+    </header><!-- top-header -->
+
+    <!-- vending-main -->
+    <main>
+        <!-- input-section -->
+        <section class="input-section">
+            <h2 class="hidden">사용자 입력</h2>
+            <!-- menu-wrapper -->
+            <section class="menu-wrapper">
+                <h3 class="hidden">상품 메뉴</h3>
+                <!-- items-list -->
+                <ul class="items-list">
+                    <!-- <li>
+                        <button type="button" value="Original_Cola" class="soldout">
+                            <img src="images/original.png" alt="Original Cola image" class="item-img">
+                            <strong class="item-name">Original_Cola</strong>
+                            <span class="item-price">1000</span>
+                        </button>
+                    </li> -->
+                </ul><!-- // items-list -->
+            </section><!-- // menu-wrapper -->
+
+            <!-- form -->
+            <form action="">
+                <!-- slot-wrapper -->
+                <section class="slot-wrapper">
+                    <h3 class="hidden">입금, 거스름돈 반환</h3>
+
+                    <!-- slot-change -->
+                    <section class="slot-change">
+                        <span id="change_display"></span>
+                        <button type="button" id="change_button">거스름돈 반환</button>
+                    </section>
+
+                    <!-- slot-insert -->
+                    <section class="slot-insert">
+                        <input type="number" placeholder="입금액 입력" step="1000" min="0" id="insert_input">
+                        <button type="button" id="insert_button">입금</button>
+                    </section>
+                </section><!-- // slot-wrapper -->
+
+                <!-- select-wrapper -->
+                <section class="select-wrapper">
+                    <h3 class="hidden">선택한 음료 목록</h3>
+                    <!-- select-list -->
+                    <ul class="select-list list-style">
+
+                        <!-- <li>
+                            <button type="button" value="Original_Cola">
+                                <img src="images/green.png" alt="Original Cola Image" class="select-img">
+                                <strong class="item-name">Original_Cola</strong>
+                                <span class="item-count">0</span>
+                            </button>
+                        </li> -->
+
+                    </ul><!-- // select-list -->
+                    <button type="button" class="get-button" id="get_button">획득</button>
+                </section><!-- // select-wrapper -->
+            </form><!-- // form -->
+        </section><!-- // input-section -->
+
+        <!-- wallet-wrapper -->
+        <article class="wallet">
+            <h3>소지금</h3>
+            <span id="my_wallet"></span>
+        </article><!-- // wallet-wrapper -->
+
+        <!-- output-section -->
+        <section class="output-section">
+            <h2>획득한 음료</h2>
+            <!-- dispenser-list -->
+            <ul class="dispenser-list list-style">
+
+                <!-- <li>
+                    <button type="button" value="Original_Cola">
+                        <img src="images/green.png" alt="Original Cola Image" class="select-img">
+                        <strong class="item-name">Original_Cola</strong>
+                        <span class="item-count">0</span>
+                    </button>
+                </li> -->
+
+            </ul><!-- // dispenser-list -->
+
+            <!-- total-price-wrapper -->
+            <p class="total-price">
+                <strong>총금액</strong>
+                <span id="total_price"></span>
+            </p>
+        </section><!-- // output-section -->
+    </main><!-- // vending-main -->
 </body>
+<script src="JS/vending.js"></script>
 
 </html>
