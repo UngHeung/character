@@ -105,24 +105,24 @@ const totalPaymentDisplay = document.getElementById("total_payment");
 const myWalletDisplay = document.getElementById("my_wallet");
 
 function displayChange() {
-    slotChangeDisplay.innerText = "";
+    slotChangeDisplay.textContent = "";
     slotChangeDisplay.insertAdjacentText("beforeend", `${change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
 }
 
 function displayTotalPayment() {
-    totalPaymentDisplay.innerText = "";
+    totalPaymentDisplay.textContent = "";
     totalPaymentDisplay.insertAdjacentText("beforeend", `${totalPayment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
 }
 
 function displayMyWallet() {
-    myWalletDisplay.innerText = "";
+    myWalletDisplay.textContent = "";
     myWalletDisplay.insertAdjacentText("beforeend", `${wallet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
 }
 
 function displaySelectItemCount(itemName) {
     if (itemsCount.get(itemName) != 0) {
         const selectItemCount = document.querySelector(`.${itemName}-count`);
-        selectItemCount.innerText = "";
+        selectItemCount.textContent = "";
         selectItemCount.insertAdjacentText("beforeend", `${itemsCount.get(itemName)}`);
     }
 }
@@ -355,7 +355,7 @@ function addDispenserList() {
                 dispenserList.appendChild(getItem);
             } else {
                 const getItemCount = document.querySelector(`.${itemName}-get>span`);
-                getItemCount.innerText = "";
+                getItemCount.textContent = "";
                 getItemCount.insertAdjacentText("beforeend", `${getCount.get(itemName) + itemsCount.get(itemName)}`);
             }
         }
@@ -535,7 +535,7 @@ function resetTotalPrice() {
 
 /* 선택 목록 초기화 */
 function resetSelectList() {
-    selectList.innerHTML = "";
+    selectList.textContent = "";
 }
 
 /* 선택 총 개수 초기화 */
