@@ -1,4 +1,6 @@
-# 자바스크립트 밴딩머신 기능 구현
+# ✨ 자바스크립트 밴딩머신 기능 구현 ✨
+
+## [👉 밴딩머신 링크](https://ungheung.github.io/vendingMachine/)
 
 ## 🔥 구현 목표 🔥
 
