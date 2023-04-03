@@ -31,12 +31,34 @@
 
 ---
 
+## 🔥 기능 분리하기 🔥
+
+-   `init`
+-   `getter`, `setter`
+-   `calculation`
+-   `function`
+-   `validation`
+-   `reset`
+
+---
+
 ## 🔥 알아보기 🔥
 
 -   `console.log()` 로 내가 원하는 정보 확인하기
+-   `alert()` 로 내가 원하는 알림 띄우기
 -   `let`, `const`
--   `for` 와 `foreach`
--   `if`
+    -   변하는 값, 변하지 않는 값 구분하기
+-   `for` 와 `forEach()`
+    -   반복과 순회
+    -   for, forEach()의 차이
+        -   for문은 동기, forEach() 함수(내장)는 비동기 방식
+            -   동기 : 요청, 결과가 동시에 이루어짐(시작 -> 끝 -> 시작 -> 끝)
+            -   비동기 : 요청, 결과가 동시에 이루어지지 않음(시작 시작 끝 시작 끝 끝)
+        -   for문은 원하는 정보에 접근하기 쉬움, forEach()는 어려움
+        -   for문은 반복 횟수를 정해줘야하지만 forEach()는 알아서 처음부터 끝까지 하나씩 순회
+    -   forEach(), callback 함수
+-   `if ~ else if, else`
+    -   else와 else if : 명확한 조건 설정
 -   `document`
     -   .querySelector(), .querySelectorAll()
         -   id, class, selector
@@ -44,7 +66,28 @@
         -   id
     -   .getElementsByTagName()
         -   element
+    -   .createElement()
+        -   setAttribute()
+        -   appendChild()
+        -   removeChild()
+-   `list` 로 아이템 목록 만들고 활용하기
 -   `Map`
+    -   아이템 정보 활용하기
+    -   get, set으로 값 변경하기
 -   `function` 으로 원하는 기능 구현하기
     -   작은 기능부터 구현하기
     -   매개변수 써먹기
+    -   `=>` 화살표 함수
+-   `addEventListener()` 로 이벤트 추가하기
+-   `｀${}｀` 로 원하는 값 대입하기
+-   `insertAdjacentHTML`, `insertAdjacentTEXT`
+    -   innerHTML, innerTEXT, textContent, DOM 구조
+        -   inner~ 는 element의 내용을 `변경`할때 사용
+            -   변경할 내용 파싱 -> 변경 내용 파싱하여 객체 생성 -> 객체 대입
+        -   insertAdjacent~ 는 element 내용을 `삽입`할때 사용
+            -   변경 내용 파싱하여 객체 생성 -> 객체 대입
+        -   왜 textContent?
+            -   innerText는 사람이 읽을 수 있는 내용만, 리플로우 발생
+            -   innerHTML은 HTML을 분석, textContent는 raw text
+            -   textContent는 노드의 모든 요소 반환, XSS 공격 위험 없음
+            -   [XSS공격](https://nordvpn.com/ko/blog/xss-attack/)
