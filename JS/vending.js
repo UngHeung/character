@@ -30,7 +30,7 @@ const itemsPrice = new Map([
 /* 아이템 재고 */
 const itemsStock = new Map([
     ["Original_Cola", 10],
-    ["Violet_Cola", 10],
+    ["Violet_Cola", 0],
     ["Yellow_Cola", 10],
     ["Cool_Cola", 10],
     ["Green_Cola", 10],
