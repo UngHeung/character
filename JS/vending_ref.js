@@ -1,5 +1,4 @@
 /* ===== init ===== */
-
 let wallet = 50000;
 let slotMoney = 0;
 let change = 0;
@@ -74,7 +73,6 @@ function setTotalCount(count) {
 }
 
 /* ===== getter ===== */
-
 function getWallet() {
     return wallet;
 }
@@ -105,24 +103,24 @@ const totalPaymentDisplay = document.getElementById("total_payment");
 const myWalletDisplay = document.getElementById("my_wallet");
 
 function displayChange() {
-    slotChangeDisplay.innerText = "";
+    slotChangeDisplay.textContent = "";
     slotChangeDisplay.insertAdjacentText("beforeend", `${change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
 }
 
 function displayTotalPayment() {
-    totalPaymentDisplay.innerText = "";
+    totalPaymentDisplay.textContent = "";
     totalPaymentDisplay.insertAdjacentText("beforeend", `${totalPayment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
 }
 
 function displayMyWallet() {
-    myWalletDisplay.innerText = "";
+    myWalletDisplay.textContent = "";
     myWalletDisplay.insertAdjacentText("beforeend", `${wallet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
 }
 
 function displaySelectItemCount(itemName) {
     if (itemsCount.get(itemName) != 0) {
         const selectItemCount = document.querySelector(`.${itemName}-count`);
-        selectItemCount.innerText = "";
+        selectItemCount.textContent = "";
         selectItemCount.insertAdjacentText("beforeend", `${itemsCount.get(itemName)}`);
     }
 }
@@ -137,9 +135,13 @@ function calSlotMoney(money) {
     slotMoney += money;
 }
 
-/* 입금액 만큼 소지금 차감 */
-function calWallet(money) {
-    wallet -= money;
+/* 입금액 만큼 소지금 차감, 거스름돈 소지금 합산 */
+function calWallet(type, money) {
+    if (type == "+") {
+        wallet += money;
+    } else if (type == "-") {
+        wallet -= money;
+    }
 }
 
 /* 아이템 가격 총액 계산 */
@@ -172,14 +174,12 @@ function calCountAndStock(type, itemName) {
         itemsCount.set(itemName, itemsCount.get(itemName) - 1);
         itemsStock.set(itemName, itemsStock.get(itemName) + 1);
     }
-    console.log(itemsCount.get(itemName), itemsStock.get(itemName));
 }
 
 /* 아이템 구매 개수 */
 function calGetCount() {
     itemsList.forEach((itemName) => {
         if (checkGetCount("count", itemName)) {
-            console.log(itemName);
             const itemCount = itemsCount.get(itemName);
             getCount.set(itemName, getCount.get(itemName) + itemCount);
         }
@@ -234,7 +234,7 @@ function slotInsertButton() {
             if (checkSlotInsert(money)) {
                 calSlotMoney(money); // 입금된 돈을 slotMoney에 합산
                 calChange(); // 입금된 돈에서 선택된 상품의 총액을 뺀 나머지를 계산
-                calWallet(money); // 소지금 차감
+                calWallet("-", money); // 소지금 차감
                 displayChange(); // 잔액 표시
                 displayMyWallet(); // 소지금 표시
             }
@@ -252,8 +252,10 @@ function slotChangeButton() {
     changeButton.addEventListener("click", () => {
         if (checkTotalCount("change")) {
             if (checkChange()) {
+                calWallet("+", change); // 반환된 거스름돈 소지금에 추가
                 resetChange(); // 거스름돈 초기화
                 calChange(); // 거스름돈 계산
+                displayMyWallet(); // 소지금 표시
                 displayChange(); // 잔액 표시
             }
         }
@@ -351,7 +353,7 @@ function addDispenserList() {
                 dispenserList.appendChild(getItem);
             } else {
                 const getItemCount = document.querySelector(`.${itemName}-get>span`);
-                getItemCount.innerText = "";
+                getItemCount.textContent = "";
                 getItemCount.insertAdjacentText("beforeend", `${getCount.get(itemName) + itemsCount.get(itemName)}`);
             }
         }
@@ -489,7 +491,6 @@ function checkGetCount(type, itemName) {
         }
     } else if (type == "get") {
         // 같은 종류의 아이템을 구매했었는지 확인
-        console.log(getCount.get(itemName));
         if (getCount.get(itemName) != 0) {
             return false;
         }
@@ -532,7 +533,7 @@ function resetTotalPrice() {
 
 /* 선택 목록 초기화 */
 function resetSelectList() {
-    selectList.innerHTML = "";
+    selectList.textContent = "";
 }
 
 /* 선택 총 개수 초기화 */

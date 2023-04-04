@@ -1,5 +1,4 @@
 /* ===== init ===== */
-
 let wallet = 50000;
 let slotMoney = 0;
 let change = 0;
@@ -74,7 +73,6 @@ function setTotalCount(count) {
 }
 
 /* ===== getter ===== */
-
 function getWallet() {
     return wallet;
 }
@@ -113,6 +111,8 @@ function displayTotalPayment() {
     totalPaymentDisplay.textContent = "";
     totalPaymentDisplay.insertAdjacentText("beforeend", `${totalPayment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
 }
+
+displayTotalPayment();
 
 function displayMyWallet() {
     myWalletDisplay.textContent = "";

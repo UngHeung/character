@@ -63,7 +63,7 @@
     -   else와 else if : 명확한 조건 설정
 -   `document`
     -   .querySelector(), .querySelectorAll()
-        -   id, class, selector
+        -   id, class, selector, element
     -   .getElementById()
         -   id
     -   .getElementsByTagName()
