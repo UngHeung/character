@@ -114,34 +114,37 @@ const slotChangeDisplay = document.getElementById("change_display");
 const totalPaymentDisplay = document.getElementById("total_payment");
 const myWalletDisplay = document.getElementById("my_wallet");
 
-function displayChange() {
-    slotChangeDisplay.textContent = "";
-    slotChangeDisplay.insertAdjacentText("beforeend", `${change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
-}
+const display = {
+    property: "화면 표시",
 
-function displayTotalPayment() {
-    totalPaymentDisplay.textContent = "";
-    totalPaymentDisplay.insertAdjacentText("beforeend", `${totalPayment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
-}
+    change: () => {
+        slotChangeDisplay.textContent = "";
+        slotChangeDisplay.insertAdjacentText("beforeend", `${change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
+    },
 
-displayTotalPayment();
+    totalPayment: () => {
+        totalPaymentDisplay.textContent = "";
+        totalPaymentDisplay.insertAdjacentText("beforeend", `${totalPayment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
+    },
 
-function displayMyWallet() {
-    myWalletDisplay.textContent = "";
-    myWalletDisplay.insertAdjacentText("beforeend", `${wallet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
-}
+    myWallet: () => {
+        myWalletDisplay.textContent = "";
+        myWalletDisplay.insertAdjacentText("beforeend", `${wallet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
+    },
 
-function displaySelectItemCount(itemName) {
-    if (itemsCount.get(itemName) != 0) {
-        const selectItemCount = document.querySelector(`.${itemName}-count`);
-        selectItemCount.textContent = "";
-        selectItemCount.insertAdjacentText("beforeend", `${itemsCount.get(itemName)}`);
-    }
-}
+    selectItemCount: (itemName) => {
+        if (itemsCount.get(itemName) != 0) {
+            const selectItemCount = document.querySelector(`.${itemName}-count`);
+            selectItemCount.textContent = "";
+            selectItemCount.insertAdjacentText("beforeend", `${itemsCount.get(itemName)}`);
+        }
+    },
+};
 
-displayChange();
-displayTotalPayment();
-displayMyWallet();
+display.change();
+display.totalPayment();
+display.myWallet();
+display.totalPayment();
 
 /* ===== calculation ===== */
 const cal = {
@@ -257,8 +260,8 @@ function slotInsertButton() {
                 cal.slotMoney(money); // 입금된 돈을 slotMoney에 합산
                 cal.change(); // 입금된 돈에서 선택된 상품의 총액을 뺀 나머지를 계산
                 cal.wallet("-", money); // 소지금 차감
-                displayChange(); // 잔액 표시
-                displayMyWallet(); // 소지금 표시
+                display.change(); // 잔액 표시
+                display.myWallet(); // 소지금 표시
             }
         }
         insertInput.value = ""; // 입금 후 input 값 초기화
@@ -277,8 +280,8 @@ function slotChangeButton() {
                 cal.wallet("+", change); // 반환된 거스름돈 소지금에 추가
                 resetChange(); // 거스름돈 초기화
                 cal.change(); // 거스름돈 계산
-                displayMyWallet(); // 소지금 표시
-                displayChange(); // 잔액 표시
+                display.myWallet(); // 소지금 표시
+                display.change(); // 잔액 표시
             }
         }
     });
@@ -302,8 +305,8 @@ function selectMenuButton() {
 
                 cal.totalPrice("+", itemsPrice.get(itemName));
                 cal.change(); // 거스름돈 계산
-                displayChange(); // 잔액 표시
-                displaySelectItemCount(itemName); // 같은 종류의 아이템 선택 개수 표시
+                display.change(); // 잔액 표시
+                display.selectItemCount(itemName); // 같은 종류의 아이템 선택 개수 표시
 
                 totalCount++; // 선택된 아이템 총 개수 ++
             }
@@ -340,11 +343,11 @@ function addSelectList(itemName) {
             } else {
                 // 같은 종류의 아이템이 마지막이 아니면 개수만 감소
                 stock.countAndStock("delete", itemName);
-                displaySelectItemCount(itemName); // 변경된 아이템 개수 표시
+                display.selectItemCount(itemName); // 변경된 아이템 개수 표시
             }
             cal.totalPrice("-", itemsPrice.get(itemName)); // 선택 아이템 가격을 가격 총액에서 차감
             cal.change(); // 거스름돈 계산
-            displayChange(); // 잔액 표시
+            display.change(); // 잔액 표시
 
             totalCount--; // 선택된 아이템 총 개수 --
         });
@@ -403,8 +406,8 @@ function getButton() {
                 resetSelectList(); // 선택 목록 초기화
                 resetTotalCount(); // 총 선택 개수 초기화
 
-                displayTotalPayment(); // 구매 총액 표시
-                displayChange(); // 잔액 표시
+                display.totalPayment(); // 구매 총액 표시
+                display.change(); // 잔액 표시
             }
         }
     });
