@@ -417,6 +417,10 @@ getButton();
 
 /* ===== validation check ===== */
 /* 소지금 확인 */
+const check = {
+    property: "유효성 검사",
+};
+
 function checkWallet() {
     const insertMoney = parseInt(insertInput.value);
 
