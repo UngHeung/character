@@ -60,8 +60,16 @@ const getCount = new Map([
 const itemsList = ["Original_Cola", "Violet_Cola", "Yellow_Cola", "Cool_Cola", "Green_Cola", "Orange_Cola"];
 
 /* ===== setter ===== */
+function setWallet(money) {
+    wallet = money;
+}
+
 function setSlotMoney(money) {
     slotMoney = money;
+}
+
+function setChange(money) {
+    change = money;
 }
 
 function setTotalPrice(price) {
@@ -70,6 +78,10 @@ function setTotalPrice(price) {
 
 function setTotalCount(count) {
     totalCount = count;
+}
+
+function setTotalPayment(price) {
+    totalPayment = price;
 }
 
 /* ===== getter ===== */
@@ -112,6 +124,8 @@ function displayTotalPayment() {
     totalPaymentDisplay.insertAdjacentText("beforeend", `${totalPayment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
 }
 
+displayTotalPayment();
+
 function displayMyWallet() {
     myWalletDisplay.textContent = "";
     myWalletDisplay.insertAdjacentText("beforeend", `${wallet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
@@ -130,66 +144,74 @@ displayTotalPayment();
 displayMyWallet();
 
 /* ===== calculation ===== */
-/* 입금액 합산 */
-function calSlotMoney(money) {
-    slotMoney += money;
-}
+const cal = {
+    property: "금액 계산 기능",
 
-/* 입금액 만큼 소지금 차감, 거스름돈 소지금 합산 */
-function calWallet(type, money) {
-    if (type == "+") {
-        wallet += money;
-    } else if (type == "-") {
-        wallet -= money;
-    }
-}
+    /* 입금액 합산 */
+    slotMoney: (money) => {
+        setSlotMoney(getSlotMoney() + money);
+    },
 
-/* 아이템 가격 총액 계산 */
-function calTotalPrice(type, price) {
-    if (type == "+") {
-        totalPrice += price;
-    } else if (type == "-") {
-        totalPrice -= price;
-    }
-}
-
-/* 입금액에서 가격 총액을 뺀 나머지 거스름돈 계산 */
-function calChange() {
-    change = slotMoney - totalPrice;
-}
-
-/* 가격 총액을 총 지불 금액에 합산 */
-function calTotalPayment() {
-    totalPayment += totalPrice;
-}
-
-/* 선택, 재고, 구매 */
-function calCountAndStock(type, itemName) {
-    if (type == "add") {
-        // 추가시 선택 개수 ++, 재고 --, 획득 개수 ++
-        itemsCount.set(itemName, itemsCount.get(itemName) + 1);
-        itemsStock.set(itemName, itemsStock.get(itemName) - 1);
-    } else if (type == "delete") {
-        // 삭제시 선택 개수 --, 재고 ++, 획득 개수 --
-        itemsCount.set(itemName, itemsCount.get(itemName) - 1);
-        itemsStock.set(itemName, itemsStock.get(itemName) + 1);
-    }
-}
-
-/* 아이템 구매 개수 */
-function calGetCount() {
-    itemsList.forEach((itemName) => {
-        if (checkGetCount("count", itemName)) {
-            const itemCount = itemsCount.get(itemName);
-            getCount.set(itemName, getCount.get(itemName) + itemCount);
+    /* 입금액 만큼 소지금 차감, 거스름돈 소지금 합산 */
+    wallet: (type, money) => {
+        if (type === "+") {
+            setWallet(getWallet() + money);
+        } else if (type === "-") {
+            setWallet(getWallet() - money);
         }
-    });
-}
+    },
 
-/* 구입 후 입금액을 잔액으로 변경 */
-function remainSlotMoney() {
-    slotMoney = change;
-}
+    /* 아이템 가격 총액 계산 */
+    totalPrice: (type, price) => {
+        if (type === "+") {
+            setTotalPrice(getTotalPrice() + price);
+        } else if (type === "-") {
+            setTotalPrice(getTotalPrice() - price);
+        }
+    },
+
+    /* 입금액에서 가격 총액을 뺀 나머지 거스름돈 계산 */
+    change: () => {
+        setChange(getSlotMoney() - getTotalPrice());
+    },
+
+    /* 가격 총액을 총 지불 금액에 합산 */
+    totalPayment: () => {
+        setTotalPayment(getTotalPayment() + getTotalPrice());
+    },
+
+    /* 구입 후 입금액을 잔액으로 변경 */
+    remainSlotMoney: () => {
+        setSlotMoney(getChange());
+    },
+};
+
+const stock = {
+    property: "재고 계산",
+
+    /* 선택, 재고, 구매 */
+    countAndStock: (type, itemName) => {
+        if (type == "add") {
+            // 추가시 선택 개수 ++, 재고 --, 획득 개수 ++
+            itemsCount.set(itemName, itemsCount.get(itemName) + 1);
+            itemsStock.set(itemName, itemsStock.get(itemName) - 1);
+        } else if (type == "delete") {
+            // 삭제시 선택 개수 --, 재고 ++, 획득 개수 --
+            itemsCount.set(itemName, itemsCount.get(itemName) - 1);
+            itemsStock.set(itemName, itemsStock.get(itemName) + 1);
+        }
+    },
+
+    /* 아이템 구매 개수 */
+    selectCount: () => {
+        itemsList.forEach((itemName) => {
+            if (checkGetCount("count", itemName)) {
+                const itemCount = itemsCount.get(itemName);
+                getCount.set(itemName, getCount.get(itemName) + itemCount);
+            }
+        });
+    },
+};
 
 /* ===== function ===== */
 /* 메뉴 목록 생성 */
@@ -232,9 +254,9 @@ function slotInsertButton() {
         if (checkWallet()) {
             // 입금할 소지금이 남아있는지 확인
             if (checkSlotInsert(money)) {
-                calSlotMoney(money); // 입금된 돈을 slotMoney에 합산
-                calChange(); // 입금된 돈에서 선택된 상품의 총액을 뺀 나머지를 계산
-                calWallet("-", money); // 소지금 차감
+                cal.slotMoney(money); // 입금된 돈을 slotMoney에 합산
+                cal.change(); // 입금된 돈에서 선택된 상품의 총액을 뺀 나머지를 계산
+                cal.wallet("-", money); // 소지금 차감
                 displayChange(); // 잔액 표시
                 displayMyWallet(); // 소지금 표시
             }
@@ -252,9 +274,9 @@ function slotChangeButton() {
     changeButton.addEventListener("click", () => {
         if (checkTotalCount("change")) {
             if (checkChange()) {
-                calWallet("+", change); // 반환된 거스름돈 소지금에 추가
+                cal.wallet("+", change); // 반환된 거스름돈 소지금에 추가
                 resetChange(); // 거스름돈 초기화
-                calChange(); // 거스름돈 계산
+                cal.change(); // 거스름돈 계산
                 displayMyWallet(); // 소지금 표시
                 displayChange(); // 잔액 표시
             }
@@ -276,10 +298,10 @@ function selectMenuButton() {
             if (checkStock("none", itemName)) {
                 addSelectList(itemName); // 선택 아이템 목록 추가
 
-                calCountAndStock("add", itemName); // 선택 아이템 개수, 재고 계산
+                stock.countAndStock("add", itemName); // 선택 아이템 개수, 재고 계산
 
-                calTotalPrice("+", itemsPrice.get(itemName)); // 선택 아이템 가격을 가격 총액에 합산
-                calChange(); // 거스름돈 계산
+                cal.totalPrice("+", itemsPrice.get(itemName));
+                cal.change(); // 거스름돈 계산
                 displayChange(); // 잔액 표시
                 displaySelectItemCount(itemName); // 같은 종류의 아이템 선택 개수 표시
 
@@ -314,14 +336,14 @@ function addSelectList(itemName) {
             if (checkCount("remove", itemName)) {
                 // 같은 종류의 마지막 아이템이면 목록에서 삭제
                 selectList.removeChild(selectItem);
-                calCountAndStock("delete", itemName);
+                stock.countAndStock("delete", itemName);
             } else {
                 // 같은 종류의 아이템이 마지막이 아니면 개수만 감소
-                calCountAndStock("delete", itemName);
+                stock.countAndStock("delete", itemName);
                 displaySelectItemCount(itemName); // 변경된 아이템 개수 표시
             }
-            calTotalPrice("-", itemsPrice.get(itemName)); // 선택 아이템 가격을 가격 총액에서 차감
-            calChange(); // 거스름돈 계산
+            cal.totalPrice("-", itemsPrice.get(itemName)); // 선택 아이템 가격을 가격 총액에서 차감
+            cal.change(); // 거스름돈 계산
             displayChange(); // 잔액 표시
 
             totalCount--; // 선택된 아이템 총 개수 --
@@ -367,14 +389,14 @@ function getButton() {
     getItemsButton.addEventListener("click", () => {
         if (checkPayment()) {
             if (checkTotalCount("get")) {
-                calTotalPayment(); // 구매 총액에 가격 총액 합산
+                cal.totalPayment(); // 구매 총액에 가격 총액 합산
 
                 addDispenserList(); // 구매 목록 생성
 
-                calGetCount(); // 아이템별 구매 개수 추가
+                stock.selectCount(); // 아이템별 구매 개수 추가
 
                 resetItemsCout(); // 선택 아이템 개수 초기화
-                remainSlotMoney(); // 거스름돈을 입금액으로 변경
+                cal.remainSlotMoney(); // 거스름돈을 입금액으로 변경
                 resetTotalPrice(); // 가격 총액 초기화
 
                 resetItemList(); // 메뉴 목록 초기화
@@ -503,7 +525,7 @@ function checkGetCount(type, itemName) {
 /* 거스름돈 초기화 */
 function resetChange() {
     slotMoney = 0;
-    calChange();
+    cal.change();
 }
 
 /* 선택 아이템 개수 초기화 */
