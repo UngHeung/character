@@ -580,9 +580,9 @@ function addDispenserList() {
                 getItem.appendChild(getItemButton);
                 dispenserList.appendChild(getItem);
             } else {
-                const getItemCount = document.querySelector(`.${itemName}-get>span`);
-                getItemCount.textContent = "";
-                getItemCount.insertAdjacentText("beforeend", `${getSelectCount(itemName) + getItemCount(itemName)}`);
+                const itemCount = document.querySelector(`.${itemName}-get>span`);
+                itemCount.textContent = "";
+                itemCount.insertAdjacentText("beforeend", `${getSelectCount(itemName) + getItemCount(itemName)}`);
             }
         }
     });
