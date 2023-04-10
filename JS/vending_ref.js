@@ -119,17 +119,32 @@ const display = {
 
     change: () => {
         slotChangeDisplay.textContent = "";
-        slotChangeDisplay.insertAdjacentText("beforeend", `${change.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
+        slotChangeDisplay.insertAdjacentText(
+            "beforeend",
+            `${getChange()
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+        );
     },
 
     totalPayment: () => {
         totalPaymentDisplay.textContent = "";
-        totalPaymentDisplay.insertAdjacentText("beforeend", `${totalPayment.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
+        totalPaymentDisplay.insertAdjacentText(
+            "beforeend",
+            `${getTotalPayment()
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+        );
     },
 
     myWallet: () => {
         myWalletDisplay.textContent = "";
-        myWalletDisplay.insertAdjacentText("beforeend", `${wallet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`);
+        myWalletDisplay.insertAdjacentText(
+            "beforeend",
+            `${getWallet()
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+        );
     },
 
     selectItemCount: (itemName) => {
@@ -216,6 +231,163 @@ const stock = {
     },
 };
 
+/* ===== validation check ===== */
+const check = {
+    property: "유효성 검사",
+
+    /* 소지금 확인 */
+    wallet: () => {
+        const insertMoney = parseInt(insertInput.value);
+
+        if (getWallet() < insertMoney) {
+            alert(`소지금 부족! ${wallet}원 남았습니다.`);
+            return false;
+        }
+
+        return true;
+    },
+
+    /* 아이템 재고 확인 */
+    stock: (type, itemName) => {
+        if (itemsStock.get(itemName) == 0) {
+            if (type != "makeList") {
+                alert(`${itemName}의 재고가 부족합니다.`);
+            }
+            return false;
+        }
+
+        return true;
+    },
+
+    /* 입력된 값이 천원 단위인지 확인 */
+    slotInsert: (money) => {
+        if (money % 1000 != 0) {
+            alert("1,000원 단위로만 입금 가능합니다.");
+            return false;
+        }
+
+        return true;
+    },
+
+    /* 거스름돈이 있는지 확인 */
+    change: () => {
+        if (getChange() == 0) {
+            alert("거스름돈이 없습니다.");
+            return false;
+        }
+
+        alert(`${getChange()}원이 반환되었습니다.`);
+        return true;
+    },
+
+    /* 선택된 물건이 있는지 확인 */
+    totalCount: (type) => {
+        if (type == "get") {
+            // 구매할 때 선택된 물건이 있는지 확인
+            if (getTotalCount() == 0) {
+                alert("선택된 상품이 없습니다.");
+                return false;
+            }
+        } else if (type == "change") {
+            // 거스름돈을 반환할 때 선택된 물건이 있는지 확인
+            if (getTotalCount() > 0) {
+                alert("선택된 상품이 있습니다.");
+                return false;
+            }
+        }
+
+        return true;
+    },
+
+    /* 목록에서 추가, 삭제할 아이템 개수 확인 */
+    count: (type, itemName) => {
+        if (type == "add") {
+            // 같은 종류의 아이템이 있는지 확인
+            if (itemsCount.get(itemName) != 0) {
+                return false;
+            }
+        } else if (type == "remove") {
+            // 같은 종류의 아이템이 없는지 확인
+            if (itemsCount.get(itemName) != 1) {
+                return false;
+            }
+        }
+
+        return true;
+    },
+
+    /* 구매 금액이 충분한지 확인 */
+    payment: () => {
+        if (getChange() < 0) {
+            alert(`${getChange() * -1}원이 부족합니다.`);
+            return false;
+        }
+
+        return true;
+    },
+
+    /* 아이템 구매 개수 확인 */
+    selectCount: (type, itemName) => {
+        if (type == "count") {
+            // 구매시 선택된 아이템이 있는지 확인
+            if (itemsCount.get(itemName) == 0) {
+                return false;
+            }
+        } else if (type == "get") {
+            // 같은 종류의 아이템을 구매했었는지 확인
+            if (getCount.get(itemName) != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    },
+};
+
+/* ===== reset ===== */
+const reset = {
+    /* 거스름돈 초기화 */
+    change: () => {
+        slotMoney = 0;
+        cal.change();
+    },
+
+    /* 선택 아이템 개수 초기화 */
+    itemsCount: () => {
+        itemsList.forEach((item) => {
+            itemsCount.set(item, 0);
+        });
+    },
+
+    /* 재고 변경에 따른 메뉴 초기화 */
+    itemList: () => {
+        itemsList.forEach((itemName) => {
+            const item = document.querySelector(`.${itemName}`);
+
+            if (itemsStock.get(itemName) == 0) {
+                // 재고가 0인 아이템은 soldout 처리
+                item.setAttribute("class", `soldout ${itemName}`);
+                item.setAttribute("disabled", "");
+            }
+        });
+    },
+
+    /* 가격 총액 초기화 */
+    totalPrice: () => {
+        totalPrice = 0;
+    },
+
+    /* 선택 목록 초기화 */
+    selectList: () => {
+        selectList.textContent = "";
+    },
+
+    /* 선택 총 개수 초기화 */
+    totalCount: () => {
+        totalCount = 0;
+    },
+};
+
 /* ===== function ===== */
 /* 메뉴 목록 생성 */
 const menuList = document.querySelector(".items-list");
@@ -278,7 +450,7 @@ function slotChangeButton() {
         if (check.totalCount("change")) {
             if (check.change()) {
                 cal.wallet("+", change); // 반환된 거스름돈 소지금에 추가
-                resetChange(); // 거스름돈 초기화
+                reset.change(); // 거스름돈 초기화
                 cal.change(); // 거스름돈 계산
                 display.myWallet(); // 소지금 표시
                 display.change(); // 잔액 표시
@@ -398,13 +570,13 @@ function getButton() {
 
                 stock.selectCount(); // 아이템별 구매 개수 추가
 
-                resetItemsCout(); // 선택 아이템 개수 초기화
+                reset.itemsCount(); // 선택 아이템 개수 초기화
                 cal.remainSlotMoney(); // 거스름돈을 입금액으로 변경
-                resetTotalPrice(); // 가격 총액 초기화
+                reset.totalPrice(); // 가격 총액 초기화
 
-                resetItemList(); // 메뉴 목록 초기화
-                resetSelectList(); // 선택 목록 초기화
-                resetTotalCount(); // 총 선택 개수 초기화
+                reset.itemList(); // 메뉴 목록 초기화
+                reset.selectList(); // 선택 목록 초기화
+                reset.totalCount(); // 총 선택 개수 초기화
 
                 display.totalPayment(); // 구매 총액 표시
                 display.change(); // 잔액 표시
@@ -414,158 +586,3 @@ function getButton() {
 }
 
 getButton();
-
-/* ===== validation check ===== */
-const check = {
-    property: "유효성 검사",
-
-    /* 소지금 확인 */
-    wallet: () => {
-        const insertMoney = parseInt(insertInput.value);
-
-        if (getWallet() < insertMoney) {
-            alert(`소지금 부족! ${wallet}원 남았습니다.`);
-            return false;
-        }
-
-        return true;
-    },
-
-    /* 아이템 재고 확인 */
-    stock: (type, itemName) => {
-        if (itemsStock.get(itemName) == 0) {
-            if (type != "makeList") {
-                alert(`${itemName}의 재고가 부족합니다.`);
-            }
-            return false;
-        }
-
-        return true;
-    },
-
-    /* 입력된 값이 천원 단위인지 확인 */
-    slotInsert: (money) => {
-        if (money % 1000 != 0) {
-            alert("1,000원 단위로만 입금 가능합니다.");
-            return false;
-        }
-
-        return true;
-    },
-
-    /* 거스름돈이 있는지 확인 */
-    change: () => {
-        if (getChange() == 0) {
-            alert("거스름돈이 없습니다.");
-            return false;
-        }
-
-        alert(`${getChange()}원이 반환되었습니다.`);
-        return true;
-    },
-
-    /* 선택된 물건이 있는지 확인 */
-    totalCount: (type) => {
-        if (type == "get") {
-            // 구매할 때 선택된 물건이 있는지 확인
-            if (getTotalCount() == 0) {
-                alert("선택된 상품이 없습니다.");
-                return false;
-            }
-        } else if (type == "change") {
-            // 거스름돈을 반환할 때 선택된 물건이 있는지 확인
-            if (getTotalCount() > 0) {
-                alert("선택된 상품이 있습니다.");
-                return false;
-            }
-        }
-
-        return true;
-    },
-
-    /* 목록에서 추가, 삭제할 아이템 개수 확인 */
-    count: (type, itemName) => {
-        if (type == "add") {
-            // 같은 종류의 아이템이 있는지 확인
-            if (itemsCount.get(itemName) != 0) {
-                return false;
-            }
-        } else if (type == "remove") {
-            // 같은 종류의 아이템이 없는지 확인
-            if (itemsCount.get(itemName) != 1) {
-                return false;
-            }
-        }
-
-        return true;
-    },
-
-    /* 구매 금액이 충분한지 확인 */
-    payment: () => {
-        if (getChange() < 0) {
-            alert(`${getChange() * -1}원이 부족합니다.`);
-            return false;
-        }
-
-        return true;
-    },
-
-    /* 아이템 구매 개수 확인 */
-    selectCount: (type, itemName) => {
-        if (type == "count") {
-            // 구매시 선택된 아이템이 있는지 확인
-            if (itemsCount.get(itemName) == 0) {
-                return false;
-            }
-        } else if (type == "get") {
-            // 같은 종류의 아이템을 구매했었는지 확인
-            if (getCount.get(itemName) != 0) {
-                return false;
-            }
-        }
-
-        return true;
-    },
-};
-
-/* ===== reset ===== */
-/* 거스름돈 초기화 */
-function resetChange() {
-    slotMoney = 0;
-    cal.change();
-}
-
-/* 선택 아이템 개수 초기화 */
-function resetItemsCout() {
-    itemsList.forEach((item) => {
-        itemsCount.set(item, 0);
-    });
-}
-
-/* 재고 변경에 따른 메뉴 초기화 */
-function resetItemList() {
-    itemsList.forEach((itemName) => {
-        const item = document.querySelector(`.${itemName}`);
-
-        if (itemsStock.get(itemName) == 0) {
-            // 재고가 0인 아이템은 soldout 처리
-            item.setAttribute("class", `soldout ${itemName}`);
-            item.setAttribute("disabled", "");
-        }
-    });
-}
-
-/* 가격 총액 초기화 */
-function resetTotalPrice() {
-    totalPrice = 0;
-}
-
-/* 선택 목록 초기화 */
-function resetSelectList() {
-    selectList.textContent = "";
-}
-
-/* 선택 총 개수 초기화 */
-function resetTotalCount() {
-    totalCount = 0;
-}
