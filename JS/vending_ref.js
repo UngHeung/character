@@ -47,7 +47,7 @@ const itemsCount = new Map([
 ]);
 
 /* 구매 아이템 개수 */
-const getCount = new Map([
+const selectCount = new Map([
     ["Original_Cola", 0],
     ["Violet_Cola", 0],
     ["Yellow_Cola", 0],
@@ -84,6 +84,18 @@ function setTotalPayment(price) {
     totalPayment = price;
 }
 
+function setItemStock(itemName, value) {
+    itemsStock.set(itemName, value);
+}
+
+function setItemCount(itemName, value) {
+    itemsCount.set(itemName, value);
+}
+
+function setSelectCount(itemName, value) {
+    selectCount.set(itemName, value);
+}
+
 /* ===== getter ===== */
 function getWallet() {
     return wallet;
@@ -107,6 +119,26 @@ function getTotalCount() {
 
 function getTotalPayment() {
     return totalPayment;
+}
+
+function getItemCode(itemName) {
+    return itemsCode.get(itemName);
+}
+
+function getItemPrice(itemName) {
+    return itemsPrice.get(itemName);
+}
+
+function getItemStock(itemName) {
+    return itemsStock.get(itemName);
+}
+
+function getItemCount(itemName) {
+    return itemsCount.get(itemName);
+}
+
+function getSelectCount(itemName) {
+    return selectCount.get(itemName);
 }
 
 /* ===== display information ===== */
@@ -148,10 +180,10 @@ const display = {
     },
 
     selectItemCount: (itemName) => {
-        if (itemsCount.get(itemName) != 0) {
+        if (getItemCount(itemName) != 0) {
             const selectItemCount = document.querySelector(`.${itemName}-count`);
             selectItemCount.textContent = "";
-            selectItemCount.insertAdjacentText("beforeend", `${itemsCount.get(itemName)}`);
+            selectItemCount.insertAdjacentText("beforeend", `${getItemCount(itemName)}`);
         }
     },
 };
@@ -211,12 +243,12 @@ const stock = {
     countAndStock: (type, itemName) => {
         if (type == "add") {
             // 추가시 선택 개수 ++, 재고 --, 획득 개수 ++
-            itemsCount.set(itemName, itemsCount.get(itemName) + 1);
-            itemsStock.set(itemName, itemsStock.get(itemName) - 1);
+            setItemCount(itemName, getItemCount(itemName) + 1);
+            setItemStock(itemName, getItemStock(itemName) - 1);
         } else if (type == "delete") {
             // 삭제시 선택 개수 --, 재고 ++, 획득 개수 --
-            itemsCount.set(itemName, itemsCount.get(itemName) - 1);
-            itemsStock.set(itemName, itemsStock.get(itemName) + 1);
+            setItemCount(itemName, getItemCount(itemName) - 1);
+            setItemStock(itemName, getItemStock(itemName) + 1);
         }
     },
 
@@ -224,8 +256,7 @@ const stock = {
     selectCount: () => {
         itemsList.forEach((itemName) => {
             if (check.selectCount("count", itemName)) {
-                const itemCount = itemsCount.get(itemName);
-                getCount.set(itemName, getCount.get(itemName) + itemCount);
+                setSelectCount(itemName, getSelectCount(itemName) + getItemCount(itemName));
             }
         });
     },
@@ -249,7 +280,7 @@ const check = {
 
     /* 아이템 재고 확인 */
     stock: (type, itemName) => {
-        if (itemsStock.get(itemName) == 0) {
+        if (getItemStock(itemName) == 0) {
             if (type != "makeList") {
                 alert(`${itemName}의 재고가 부족합니다.`);
             }
@@ -303,12 +334,12 @@ const check = {
     count: (type, itemName) => {
         if (type == "add") {
             // 같은 종류의 아이템이 있는지 확인
-            if (itemsCount.get(itemName) != 0) {
+            if (getItemCount(itemName) != 0) {
                 return false;
             }
         } else if (type == "remove") {
             // 같은 종류의 아이템이 없는지 확인
-            if (itemsCount.get(itemName) != 1) {
+            if (getItemCount(itemName) != 1) {
                 return false;
             }
         }
@@ -330,12 +361,12 @@ const check = {
     selectCount: (type, itemName) => {
         if (type == "count") {
             // 구매시 선택된 아이템이 있는지 확인
-            if (itemsCount.get(itemName) == 0) {
+            if (getItemCount(itemName) == 0) {
                 return false;
             }
         } else if (type == "get") {
             // 같은 종류의 아이템을 구매했었는지 확인
-            if (getCount.get(itemName) != 0) {
+            if (getSelectCount(itemName) != 0) {
                 return false;
             }
         }
@@ -396,7 +427,7 @@ function makeMenuList() {
     itemsList.forEach((itemName) => {
         const item = document.createElement("li");
         const button = document.createElement("button");
-        const itemCode = itemsCode.get(itemName);
+        const itemCode = getItemCode(itemName);
 
         button.setAttribute("type", "button");
         button.setAttribute("value", `${itemName}`); // 버튼 클릭 시 가져오기 위한 value
@@ -410,7 +441,7 @@ function makeMenuList() {
 
         button.insertAdjacentHTML("beforeend", `<img src="images/${itemCode}.png" alt="${itemName.replace("_", " ")} image" class="item-img">`);
         button.insertAdjacentHTML("beforeend", `<strong class="item-name">${itemName}</strong>`);
-        button.insertAdjacentHTML("beforeend", `<span class="item-price">${itemsPrice.get(itemName)}원</span>`);
+        button.insertAdjacentHTML("beforeend", `<span class="item-price">${getItemPrice(itemName)}원</span>`);
 
         item.appendChild(button);
         menuList.appendChild(item);
@@ -475,7 +506,7 @@ function selectMenuButton() {
 
                 stock.countAndStock("add", itemName); // 선택 아이템 개수, 재고 계산
 
-                cal.totalPrice("+", itemsPrice.get(itemName));
+                cal.totalPrice("+", getItemPrice(itemName));
                 cal.change(); // 거스름돈 계산
                 display.change(); // 잔액 표시
                 display.selectItemCount(itemName); // 같은 종류의 아이템 선택 개수 표시
@@ -542,16 +573,16 @@ function addDispenserList() {
                 getItemButton.setAttribute("class", `${itemName}-get`);
                 getItemButton.setAttribute("disabled", "");
 
-                getItemButton.insertAdjacentHTML("beforeend", `<img src="images/${itemsCode.get(itemName)}.png" alt="${itemName.replace("_", " ")} image" class="select-img">`);
+                getItemButton.insertAdjacentHTML("beforeend", `<img src="images/${getItemCode(itemName)}.png" alt="${itemName.replace("_", " ")} image" class="select-img">`);
                 getItemButton.insertAdjacentHTML("beforeend", `<strong class="item-name">${itemName}</strong>`);
-                getItemButton.insertAdjacentHTML("beforeend", `<span class="${itemName}-count">${itemsCount.get(itemName)}</span>`);
+                getItemButton.insertAdjacentHTML("beforeend", `<span class="${itemName}-count">${getItemCount(itemName)}</span>`);
 
                 getItem.appendChild(getItemButton);
                 dispenserList.appendChild(getItem);
             } else {
                 const getItemCount = document.querySelector(`.${itemName}-get>span`);
                 getItemCount.textContent = "";
-                getItemCount.insertAdjacentText("beforeend", `${getCount.get(itemName) + itemsCount.get(itemName)}`);
+                getItemCount.insertAdjacentText("beforeend", `${getSelectCount(itemName) + getItemCount(itemName)}`);
             }
         }
     });
