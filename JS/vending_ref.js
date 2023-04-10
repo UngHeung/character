@@ -532,7 +532,7 @@ function addSelectList(itemName) {
 
         selectButton.insertAdjacentHTML("beforeend", `<img src="images/${itemsCode.get(itemName)}.png" alt="${itemName.replace("_", " ")} image" class="select-img">`);
         selectButton.insertAdjacentHTML("beforeend", `<strong class="item-name">${itemName}</strong>`);
-        selectButton.insertAdjacentHTML("beforeend", `<span class="${itemName}-count">${itemsCount.get(itemName) + 1}</span>`);
+        selectButton.insertAdjacentHTML("beforeend", `<span class="${itemName}-count">${getItemCount(itemName) + 1}</span>`);
 
         selectItem.appendChild(selectButton);
         selectList.appendChild(selectItem);
