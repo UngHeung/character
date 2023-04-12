@@ -195,7 +195,7 @@ const totalPaymentDisplay = document.getElementById("total_payment");
 const myWalletDisplay = document.getElementById("my_wallet");
 
 const display = {
-    property: "화면 표시",
+    /* "화면 표시 */
 
     change: () => {
         slotChangeDisplay.textContent = "";
@@ -243,7 +243,7 @@ display.totalPayment();
 
 /* ===== calculation ===== */
 const cal = {
-    property: "금액 계산 기능",
+    /* "금액 계산 기능" */
 
     /* 입금액 합산 */
     slotMoney: (money) => {
@@ -285,7 +285,7 @@ const cal = {
 };
 
 const stock = {
-    property: "재고 계산",
+    /* "재고 계산" */
 
     /* 선택, 재고, 구매 */
     countAndStock: (type, itemName) => {
@@ -312,7 +312,7 @@ const stock = {
 
 /* ===== validation check ===== */
 const check = {
-    property: "유효성 검사",
+    /* "유효성 검사" */
 
     /* 소지금 확인 */
     wallet: () => {
@@ -425,6 +425,8 @@ const check = {
 
 /* ===== reset ===== */
 const reset = {
+    /* 초기화 */
+
     /* 거스름돈 초기화 */
     change: () => {
         slotMoney = 0;
