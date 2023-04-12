@@ -237,3 +237,23 @@ for (let i = 0; i < 10; i++) {
     -   입금 버튼 누를 때 입금할 돈이 있는가?
     -   구매 금액이 모자라지 않은가?
     -   거스름돈이 있는가?
+
+## insertAdjacentHTML과 innerHTML의 차이
+
+[참조](https://usage.tistory.com/133)
+
+1. innerHTML
+    - 기존 DOM 요소 파싱, 새로 입력할 요소 파싱, 기존 요소와 새로운 요소를 교환
+2. insertAdjacentHTML
+    - 새로 입력할 요소 파싱, 기존 요소에 새로운 요소 삽입
+
+-   단순히 새로운 요소를 추가하는 용도로 사용할 땐 insertAdjacentHTML을 사용하는 것이 성능적으로 좋다.
+
+## innerText, textContent의 차이
+
+1. innerText
+
+    - 요소에 해석이 가능한 스타일 등을 해석 후 적용(랜더링)한 텍스트를 가져오거나 추가
+
+2. textContent
+    - 텍스트를 날것 그대로 가져오거나 추가

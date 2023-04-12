@@ -56,6 +56,54 @@ const selectCount = new Map([
     ["Orange_Cola", 0],
 ]);
 
+const Original_Cola = {
+    itemCode: "original",
+    itemPrice: 1000,
+    itemStock: 10,
+    itemCount: 10,
+    selectCount: 0,
+};
+
+const Violet_Cola = {
+    itemCode: "violet",
+    itemPrice: 1000,
+    itemStock: 10,
+    itemCount: 10,
+    selectCount: 0,
+};
+
+const Yellow_Cola = {
+    itemCode: "yellow",
+    itemPrice: 1000,
+    itemStock: 10,
+    itemCount: 10,
+    selectCount: 0,
+};
+
+const Cool_Cola = {
+    itemCode: "cool",
+    itemPrice: 1000,
+    itemStock: 10,
+    itemCount: 10,
+    selectCount: 0,
+};
+
+const Green_Cola = {
+    itemCode: "green",
+    itemPrice: 1000,
+    itemStock: 10,
+    itemCount: 10,
+    selectCount: 0,
+};
+
+const Orange_Cola = {
+    itemCode: "orange",
+    itemPrice: 1000,
+    itemStock: 10,
+    itemCount: 10,
+    selectCount: 0,
+};
+
 /* 상품 목록 */
 const itemsList = ["Original_Cola", "Violet_Cola", "Yellow_Cola", "Cool_Cola", "Green_Cola", "Orange_Cola"];
 
