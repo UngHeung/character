@@ -12,59 +12,64 @@ const items = [
         name: "Original_Cola",
         code: "original",
         cost: 1000,
-        count: 10,
-        select: 0,
+        stock: 10,
+        count: 0,
+        get: 0,
     },
     {
         name: "Violet_Cola",
         code: "violet",
         cost: 1000,
+        stock: 0,
         count: 0,
-        select: 0,
+        get: 0,
     },
     {
         name: "Yellow_Cola",
         code: "yellow",
         cost: 1000,
-        count: 10,
-        select: 0,
+        stock: 10,
+        count: 0,
+        get: 0,
     },
     {
         name: "Cool_Cola",
         code: "cool",
         cost: 1000,
-        count: 10,
-        select: 0,
+        stock: 10,
+        count: 0,
+        get: 0,
     },
     {
         name: "Green_Cola",
         code: "green",
         cost: 1000,
-        count: 10,
-        select: 0,
+        stock: 10,
+        count: 0,
+        get: 0,
     },
     {
         name: "Orange_Cola",
         code: "orange",
         cost: 1000,
-        count: 10,
-        select: 0,
+        stock: 10,
+        count: 0,
+        get: 0,
     },
 ];
 
 /* ===== access item information ===== */
 function itemInfo(itemName) {
     const drink = items.filter((item) => item.name === itemName);
-    console.log(drink);
     return drink[0];
 }
 
 let changeItemInfo = function (type, itemName, value) {
     const drink = itemInfo(itemName);
-    if (type === "count") {
+    if (type === "stock") {
+        drink.stock = value;
+    } else if (type === "count") {
         drink.count = value;
-    } else if (type === "select") {
-        drink.select = value;
     }
 };
 
@@ -195,8 +200,8 @@ const display = {
     selectItemCount: (itemName) => {
         drink = itemInfo(itemName);
         if (drink.count !== 0) {
-            const selectItemCount = document.querySelector(`.${itemName}-count`);
-            selectItemCount.textContent = `${drink.count}`;
+            const itemCount = document.querySelector(`.${itemName}-count`);
+            itemCount.textContent = `${drink.count}`;
         }
     },
 };
@@ -257,12 +262,12 @@ const stock = {
         const drink = itemInfo(itemName);
         if (type === "add") {
             // 추가시 선택 개수 ++, 재고 --, 획득 개수 ++
-            drink.itemCount++;
-            drink.itemStock--;
+            drink.count++;
+            drink.stock--;
         } else if (type === "delete") {
             // 삭제시 선택 개수 --, 재고 ++, 획득 개수 --
-            drink.itemCount--;
-            drink.itemStock++;
+            drink.count--;
+            drink.stock++;
         }
     },
 
@@ -270,7 +275,7 @@ const stock = {
     selectCount: () => {
         items.forEach((drink) => {
             if (check.selectCount("count", drink.name)) {
-                setSelectCount(drink.name, drink.count + drink.count);
+                setSelectCount(drink.name, drink.count + drink.get);
             }
         });
     },
@@ -295,9 +300,10 @@ const check = {
     /* 아이템 재고 확인 */
     stock: (type, itemName) => {
         const drink = itemInfo(itemName);
+
         if (drink.stock === 0) {
             if (type !== "makeList") {
-                alert(`${itemName}의 재고가 부족합니다.`);
+                alert(`${drink.name}의 재고가 부족합니다.`);
             }
             return false;
         }
@@ -437,3 +443,202 @@ const reset = {
         totalCount = 0;
     },
 };
+
+/* ===== function ===== */
+/* 메뉴 목록 생성 */
+const menuList = document.querySelector(".items-list");
+
+function makeMenuList() {
+    items.forEach((drink) => {
+        const item = document.createElement("li");
+        const button = document.createElement("button");
+
+        button.setAttribute("type", "button");
+        button.setAttribute("value", `${drink.name}`); // 버튼 클릭 시 가져오기 위한 value
+        button.setAttribute("class", `in-stock ${drink.name}`); // instock은 재고 있음, soldout은 재고 없음
+
+        // 첫 목록 생성시 재고 없으면 instock 대신 soldout, disabled로 비활성화
+        if (!check.stock("makeList", drink.name)) {
+            button.setAttribute("class", `soldout ${drink.name}`);
+            button.setAttribute("disabled", "");
+        }
+
+        button.insertAdjacentHTML("beforeend", `<img src="images/${drink.code}.png" alt="${drink.name.replace("_", " ")} image" class="item-img">`);
+        button.insertAdjacentHTML("beforeend", `<strong class="item-name">${drink.name}</strong>`);
+        button.insertAdjacentHTML("beforeend", `<span class="item-price">${drink.cost}원</span>`);
+
+        item.appendChild(button);
+        menuList.appendChild(item);
+    });
+}
+
+makeMenuList();
+
+/* 입금 */
+const insertInput = document.getElementById("insert_input");
+const insertButton = document.getElementById("insert_button");
+
+function slotInsertButton() {
+    insertButton.addEventListener("click", () => {
+        const money = parseInt(insertInput.value);
+        if (check.wallet()) {
+            // 입금할 소지금이 남아있는지 확인
+            if (check.slotInsert(money)) {
+                cal.slotMoney(money); // 입금된 돈을 slotMoney에 합산
+                cal.change(); // 입금된 돈에서 선택된 상품의 총액을 뺀 나머지를 계산
+                cal.wallet("-", money); // 소지금 차감
+                display.change(); // 잔액 표시
+                display.myWallet(); // 소지금 표시
+            }
+        }
+        insertInput.value = ""; // 입금 후 input 값 초기화
+    });
+}
+
+slotInsertButton();
+
+/* 거스름돈 반환 버튼 */
+const changeButton = document.getElementById("change_button");
+
+function slotChangeButton() {
+    changeButton.addEventListener("click", () => {
+        if (check.totalCount("change")) {
+            if (check.change()) {
+                cal.wallet("+", change); // 반환된 거스름돈 소지금에 추가
+                reset.change(); // 거스름돈 초기화
+                cal.change(); // 거스름돈 계산
+                display.myWallet(); // 소지금 표시
+                display.change(); // 잔액 표시
+            }
+        }
+    });
+}
+
+slotChangeButton();
+
+/* 메뉴 아이템 버튼 이벤트 추가 */
+const menuItem = document.querySelectorAll(".in-stock");
+
+function selectMenuButton() {
+    menuItem.forEach((item) => {
+        item.addEventListener("click", () => {
+            const drink = itemInfo(item.value);
+
+            // 재고 확인
+            if (check.stock("none", drink.name)) {
+                addSelectList(drink.name); // 선택 아이템 목록 추가
+
+                stock.countAndStock("add", drink.name); // 선택 아이템 개수, 재고 계산
+
+                cal.totalPrice("+", drink.cost);
+                cal.change(); // 거스름돈 계산
+                display.change(); // 잔액 표시
+                display.selectItemCount(drink.name); // 같은 종류의 아이템 선택 개수 표시
+
+                totalCount++; // 선택된 아이템 총 개수 ++
+            }
+        });
+    });
+}
+
+selectMenuButton();
+
+/* 선택된 아이템 목록 */
+const selectList = document.querySelector(".select-list");
+
+function addSelectList(itemName) {
+    const selectItem = document.createElement("li");
+    const selectButton = document.createElement("button");
+    const drink = itemInfo(itemName);
+
+    if (check.count("add", drink.name)) {
+        selectButton.setAttribute("type", "button");
+        selectButton.setAttribute("value", `${drink.name}`);
+
+        selectButton.insertAdjacentHTML("beforeend", `<img src="images/${drink.code}.png" alt="${drink.name.replace("_", " ")} image" class="select-img">`);
+        selectButton.insertAdjacentHTML("beforeend", `<strong class="item-name">${drink.name}</strong>`);
+        selectButton.insertAdjacentHTML("beforeend", `<span class="${drink.name}-count">${drink.count}</span>`);
+
+        selectItem.appendChild(selectButton);
+        selectList.appendChild(selectItem);
+
+        /* 목록 아이템 삭제 */
+        selectButton.addEventListener("click", () => {
+            if (check.count("remove", drink.name)) {
+                // 같은 종류의 마지막 아이템이면 목록에서 삭제
+                selectList.removeChild(selectItem);
+                stock.countAndStock("delete", drink.name);
+            } else {
+                // 같은 종류의 아이템이 마지막이 아니면 개수만 감소
+                stock.countAndStock("delete", drink.name);
+                display.selectItemCount(drink.name); // 변경된 아이템 개수 표시
+            }
+            cal.totalPrice("-", drink.cost); // 선택 아이템 가격을 가격 총액에서 차감
+            cal.change(); // 거스름돈 계산
+            display.change(); // 잔액 표시
+
+            totalCount--; // 선택된 아이템 총 개수 --
+        });
+    }
+}
+
+/* 구매한 아이템 목록 */
+const dispenserList = document.querySelector(".dispenser-list");
+
+function addDispenserList() {
+    items.forEach((drink) => {
+        // 선택된 아이템이 있는지 확인
+        if (!check.count("add", drink.name)) {
+            // 이미 구매한 같은 종류의 아이템이 있는지 확인
+            if (check.selectCount("count", drink.name)) {
+                const getItem = document.createElement("li");
+                const getItemButton = document.createElement("button");
+
+                getItemButton.setAttribute("type", "button");
+                getItemButton.setAttribute("class", `${drink.name}-get`);
+                getItemButton.setAttribute("disabled", "");
+
+                getItemButton.insertAdjacentHTML("beforeend", `<img src="images/${drink.code}.png" alt="${drink.name.replace("_", " ")} image" class="select-img">`);
+                getItemButton.insertAdjacentHTML("beforeend", `<strong class="item-name">${drink.name}</strong>`);
+                getItemButton.insertAdjacentHTML("beforeend", `<span class="${drink.name}-count">${drink.count}</span>`);
+
+                getItem.appendChild(getItemButton);
+                dispenserList.appendChild(getItem);
+            } else {
+                const itemCount = document.querySelector(`.${drink.name}-get>span`);
+                itemCount.textContent = "";
+                itemCount.insertAdjacentText("beforeend", `${drink.count + drink.get}`);
+            }
+        }
+    });
+}
+
+/* 획득 버튼 이벤트 */
+const getItemsButton = document.getElementById("get_button");
+
+function getButton() {
+    getItemsButton.addEventListener("click", () => {
+        if (check.payment()) {
+            if (check.totalCount("get")) {
+                cal.totalPayment(); // 구매 총액에 가격 총액 합산
+
+                addDispenserList(); // 구매 목록 생성
+
+                stock.selectCount(); // 아이템별 구매 개수 추가
+
+                reset.itemsCount(); // 선택 아이템 개수 초기화
+                cal.remainSlotMoney(); // 거스름돈을 입금액으로 변경
+                reset.totalPrice(); // 가격 총액 초기화
+
+                reset.itemList(); // 메뉴 목록 초기화
+                reset.selectList(); // 선택 목록 초기화
+                reset.totalCount(); // 총 선택 개수 초기화
+
+                display.totalPayment(); // 구매 총액 표시
+                display.change(); // 잔액 표시
+            }
+        }
+    });
+}
+
+getButton();
