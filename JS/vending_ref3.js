@@ -59,6 +59,15 @@ function itemInfo(itemName) {
     return drink[0];
 }
 
+let changeItemInfo = function (type, itemName, value) {
+    const drink = itemInfo(itemName);
+    if (type === "count") {
+        drink.count = value;
+    } else if (type === "select") {
+        drink.select = value;
+    }
+};
+
 /* ===== setter ===== */
 function setWallet(money) {
     wallet = money;
@@ -380,5 +389,51 @@ const check = {
         }
 
         return true;
+    },
+};
+
+/* ===== reset ===== */
+const reset = {
+    /* 초기화 */
+
+    /* 거스름돈 초기화 */
+    change: () => {
+        slotMoney = 0;
+        cal.change();
+    },
+
+    /* 선택 아이템 개수 초기화 */
+    itemsCount: () => {
+        items.forEach((drink) => {
+            changeItemInfo("count", drink, 0);
+        });
+    },
+
+    /* 재고 변경에 따른 메뉴 초기화 */
+    itemList: () => {
+        itemsList.forEach((itemName) => {
+            const item = document.querySelector(`.${itemName}`);
+
+            if (itemsStock.get(itemName) == 0) {
+                // 재고가 0인 아이템은 soldout 처리
+                item.setAttribute("class", `soldout ${itemName}`);
+                item.setAttribute("disabled", "");
+            }
+        });
+    },
+
+    /* 가격 총액 초기화 */
+    totalPrice: () => {
+        totalPrice = 0;
+    },
+
+    /* 선택 목록 초기화 */
+    selectList: () => {
+        selectList.textContent = "";
+    },
+
+    /* 선택 총 개수 초기화 */
+    totalCount: () => {
+        totalCount = 0;
     },
 };
