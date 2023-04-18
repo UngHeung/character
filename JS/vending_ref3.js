@@ -228,17 +228,17 @@ const stock = {
     /* 선택, 재고, 구매 */
     countAndStock: (type, drink) => {
         if (type === "add") {
-            // 추가시 선택 개수 ++, 재고 --, 획득 개수 ++
+            // 추가시 선택 개수 ++, 재고 --
             drink.count++;
             drink.stock--;
         } else if (type === "delete") {
-            // 삭제시 선택 개수 --, 재고 ++, 획득 개수 --
+            // 삭제시 선택 개수 --, 재고 ++
             drink.count--;
             drink.stock++;
         }
     },
 
-    /* 아이템 구매 개수 */ ///////////////////////////////////////////////////////////////
+    /* 아이템 구매 개수 */
     getCount: () => {
         items.forEach((drink) => {
             if (check.selectCount("count", drink)) {
