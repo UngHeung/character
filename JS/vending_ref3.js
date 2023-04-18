@@ -64,8 +64,7 @@ function itemInfo(itemName) {
     return drink[0];
 }
 
-let changeItemInfo = function (type, itemName, value) {
-    const drink = itemInfo(itemName);
+let changeItemInfo = function (type, drink, value) {
     if (type === "stock") {
         drink.stock = value;
     } else if (type === "count") {
@@ -98,18 +97,6 @@ function setTotalPayment(price) {
     totalPayment = price;
 }
 
-// function setItemStock(itemName, value) {
-//     itemsStock.set(itemName, value);
-// }
-
-// function setItemCount(itemName, value) {
-//     itemsCount.set(itemName, value);
-// }
-
-// function setSelectCount(itemName, value) {
-//     selectCount.set(itemName, value);
-// }
-
 /* ===== getter ===== */
 function getWallet() {
     return wallet;
@@ -134,26 +121,6 @@ function getTotalCount() {
 function getTotalPayment() {
     return totalPayment;
 }
-
-// function getItemCode(itemName) {
-//     return itemsCode.get(itemName);
-// }
-
-// function getItemPrice(itemName) {
-//     return itemsPrice.get(itemName);
-// }
-
-// function getItemStock(itemName) {
-//     return itemsStock.get(itemName);
-// }
-
-// function getItemCount(itemName) {
-//     return itemsCount.get(itemName);
-// }
-
-// function getSelectCount(itemName) {
-//     return selectCount.get(itemName);
-// }
 
 /* ===== display information ===== */
 const slotChangeDisplay = document.getElementById("change_display");
@@ -197,10 +164,9 @@ const display = {
     },
 
     /* 선택개수 */
-    selectItemCount: (itemName) => {
-        drink = itemInfo(itemName);
+    selectItemCount: (drink) => {
         if (drink.count !== 0) {
-            const itemCount = document.querySelector(`.${itemName}-count`);
+            const itemCount = document.querySelector(`.${drink.name}-count`);
             itemCount.textContent = `${drink.count}`;
         }
     },
@@ -258,8 +224,7 @@ const stock = {
     /* "재고 계산" */
 
     /* 선택, 재고, 구매 */
-    countAndStock: (type, itemName) => {
-        const drink = itemInfo(itemName);
+    countAndStock: (type, drink) => {
         if (type === "add") {
             // 추가시 선택 개수 ++, 재고 --, 획득 개수 ++
             drink.count++;
@@ -272,10 +237,12 @@ const stock = {
     },
 
     /* 아이템 구매 개수 */ ///////////////////////////////////////////////////////////////
-    selectCount: () => {
+    getCount: () => {
         items.forEach((drink) => {
-            if (check.selectCount("count", drink.name)) {
-                setSelectCount(drink.name, drink.count + drink.get);
+            if (check.selectCount("count", drink)) {
+                drink.get += drink.count;
+                console.log(drink.get);
+                drink.count = 0;
             }
         });
     },
@@ -298,9 +265,7 @@ const check = {
     },
 
     /* 아이템 재고 확인 */
-    stock: (type, itemName) => {
-        const drink = itemInfo(itemName);
-
+    stock: (type, drink) => {
         if (drink.stock === 0) {
             if (type !== "makeList") {
                 alert(`${drink.name}의 재고가 부족합니다.`);
@@ -352,8 +317,7 @@ const check = {
     },
 
     /* 목록에서 추가, 삭제할 아이템 개수 확인 */
-    count: (type, itemName) => {
-        const drink = itemInfo(itemName);
+    count: (type, drink) => {
         if (type === "add") {
             // 같은 종류의 아이템이 있는지 확인
             if (drink.count !== 0) {
@@ -380,8 +344,7 @@ const check = {
     },
 
     /* 아이템 구매 개수 확인 */
-    selectCount: (type, itemName) => {
-        const drink = itemInfo(itemName);
+    selectCount: (type, drink) => {
         if (type === "count") {
             // 구매시 선택된 아이템이 있는지 확인
             if (drink.count === 0) {
@@ -389,7 +352,7 @@ const check = {
             }
         } else if (type === "get") {
             // 같은 종류의 아이템을 구매했었는지 확인
-            if (drink.select !== 0) {
+            if (drink.get !== 0) {
                 return false;
             }
         }
@@ -417,12 +380,12 @@ const reset = {
 
     /* 재고 변경에 따른 메뉴 초기화 */
     itemList: () => {
-        itemsList.forEach((itemName) => {
-            const item = document.querySelector(`.${itemName}`);
+        items.forEach((drink) => {
+            const item = document.querySelector(`.${drink.name}`);
 
-            if (itemsStock.get(itemName) == 0) {
+            if (drink.stock == 0) {
                 // 재고가 0인 아이템은 soldout 처리
-                item.setAttribute("class", `soldout ${itemName}`);
+                item.setAttribute("class", `soldout ${drink.name}`);
                 item.setAttribute("disabled", "");
             }
         });
@@ -458,7 +421,7 @@ function makeMenuList() {
         button.setAttribute("class", `in-stock ${drink.name}`); // instock은 재고 있음, soldout은 재고 없음
 
         // 첫 목록 생성시 재고 없으면 instock 대신 soldout, disabled로 비활성화
-        if (!check.stock("makeList", drink.name)) {
+        if (!check.stock("makeList", drink)) {
             button.setAttribute("class", `soldout ${drink.name}`);
             button.setAttribute("disabled", "");
         }
@@ -525,15 +488,15 @@ function selectMenuButton() {
             const drink = itemInfo(item.value);
 
             // 재고 확인
-            if (check.stock("none", drink.name)) {
+            if (check.stock("none", drink)) {
                 addSelectList(drink.name); // 선택 아이템 목록 추가
 
-                stock.countAndStock("add", drink.name); // 선택 아이템 개수, 재고 계산
+                stock.countAndStock("add", drink); // 선택 아이템 개수, 재고 계산
 
                 cal.totalPrice("+", drink.cost);
                 cal.change(); // 거스름돈 계산
                 display.change(); // 잔액 표시
-                display.selectItemCount(drink.name); // 같은 종류의 아이템 선택 개수 표시
+                display.selectItemCount(drink); // 같은 종류의 아이템 선택 개수 표시
 
                 totalCount++; // 선택된 아이템 총 개수 ++
             }
@@ -551,7 +514,7 @@ function addSelectList(itemName) {
     const selectButton = document.createElement("button");
     const drink = itemInfo(itemName);
 
-    if (check.count("add", drink.name)) {
+    if (check.count("add", drink)) {
         selectButton.setAttribute("type", "button");
         selectButton.setAttribute("value", `${drink.name}`);
 
@@ -564,14 +527,14 @@ function addSelectList(itemName) {
 
         /* 목록 아이템 삭제 */
         selectButton.addEventListener("click", () => {
-            if (check.count("remove", drink.name)) {
+            if (check.count("remove", drink)) {
                 // 같은 종류의 마지막 아이템이면 목록에서 삭제
                 selectList.removeChild(selectItem);
-                stock.countAndStock("delete", drink.name);
+                stock.countAndStock("delete", drink);
             } else {
                 // 같은 종류의 아이템이 마지막이 아니면 개수만 감소
-                stock.countAndStock("delete", drink.name);
-                display.selectItemCount(drink.name); // 변경된 아이템 개수 표시
+                stock.countAndStock("delete", drink);
+                display.selectItemCount(drink); // 변경된 아이템 개수 표시
             }
             cal.totalPrice("-", drink.cost); // 선택 아이템 가격을 가격 총액에서 차감
             cal.change(); // 거스름돈 계산
@@ -588,9 +551,9 @@ const dispenserList = document.querySelector(".dispenser-list");
 function addDispenserList() {
     items.forEach((drink) => {
         // 선택된 아이템이 있는지 확인
-        if (!check.count("add", drink.name)) {
+        if (!check.count("add", drink)) {
             // 이미 구매한 같은 종류의 아이템이 있는지 확인
-            if (check.selectCount("count", drink.name)) {
+            if (check.selectCount("get", drink)) {
                 const getItem = document.createElement("li");
                 const getItemButton = document.createElement("button");
 
@@ -607,7 +570,7 @@ function addDispenserList() {
             } else {
                 const itemCount = document.querySelector(`.${drink.name}-get>span`);
                 itemCount.textContent = "";
-                itemCount.insertAdjacentText("beforeend", `${drink.count + drink.get}`);
+                itemCount.insertAdjacentText("beforeend", `${drink.get}`);
             }
         }
     });
@@ -623,8 +586,7 @@ function getButton() {
                 cal.totalPayment(); // 구매 총액에 가격 총액 합산
 
                 addDispenserList(); // 구매 목록 생성
-
-                stock.selectCount(); // 아이템별 구매 개수 추가
+                stock.getCount(); // 아이템별 구매 개수 추가
 
                 reset.itemsCount(); // 선택 아이템 개수 초기화
                 cal.remainSlotMoney(); // 거스름돈을 입금액으로 변경
