@@ -69,6 +69,8 @@ let changeItemInfo = function (type, drink, value) {
         drink.stock = value;
     } else if (type === "count") {
         drink.count = value;
+    } else if (type === "get") {
+        drink.get += drink.count;
     }
 };
 
@@ -240,9 +242,7 @@ const stock = {
     getCount: () => {
         items.forEach((drink) => {
             if (check.selectCount("count", drink)) {
-                drink.get += drink.count;
-                console.log(drink.get);
-                drink.count = 0;
+                changeItemInfo("get", drink);
             }
         });
     },
@@ -570,7 +570,7 @@ function addDispenserList() {
             } else {
                 const itemCount = document.querySelector(`.${drink.name}-get>span`);
                 itemCount.textContent = "";
-                itemCount.insertAdjacentText("beforeend", `${drink.get}`);
+                itemCount.insertAdjacentText("beforeend", `${drink.get + drink.count}`);
             }
         }
     });
@@ -586,6 +586,7 @@ function getButton() {
                 cal.totalPayment(); // 구매 총액에 가격 총액 합산
 
                 addDispenserList(); // 구매 목록 생성
+
                 stock.getCount(); // 아이템별 구매 개수 추가
 
                 reset.itemsCount(); // 선택 아이템 개수 초기화
