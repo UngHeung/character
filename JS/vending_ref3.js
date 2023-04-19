@@ -14,7 +14,7 @@ const items = [
         cost: 1000,
         stock: 10,
         count: 0,
-        get: 0,
+        sell: 0,
     },
     {
         name: "Violet_Cola",
@@ -22,7 +22,7 @@ const items = [
         cost: 1000,
         stock: 0,
         count: 0,
-        get: 0,
+        sell: 0,
     },
     {
         name: "Yellow_Cola",
@@ -30,7 +30,7 @@ const items = [
         cost: 1000,
         stock: 10,
         count: 0,
-        get: 0,
+        sell: 0,
     },
     {
         name: "Cool_Cola",
@@ -38,7 +38,7 @@ const items = [
         cost: 1000,
         stock: 10,
         count: 0,
-        get: 0,
+        sell: 0,
     },
     {
         name: "Green_Cola",
@@ -46,7 +46,7 @@ const items = [
         cost: 1000,
         stock: 10,
         count: 0,
-        get: 0,
+        sell: 0,
     },
     {
         name: "Orange_Cola",
@@ -54,7 +54,7 @@ const items = [
         cost: 1000,
         stock: 10,
         count: 0,
-        get: 0,
+        sell: 0,
     },
 ];
 
@@ -69,8 +69,8 @@ let changeItemInfo = function (type, drink, value) {
         drink.stock = value;
     } else if (type === "count") {
         drink.count = value;
-    } else if (type === "get") {
-        drink.get += drink.count;
+    } else if (type === "sell") {
+        drink.sell += drink.count;
     }
 };
 
@@ -242,7 +242,7 @@ const stock = {
     getCount: () => {
         items.forEach((drink) => {
             if (check.selectCount("count", drink)) {
-                changeItemInfo("get", drink);
+                changeItemInfo("sell", drink);
             }
         });
     },
@@ -299,7 +299,7 @@ const check = {
 
     /* 선택된 물건이 있는지 확인 */
     totalCount: (type) => {
-        if (type === "get") {
+        if (type === "sell") {
             // 구매할 때 선택된 물건이 있는지 확인
             if (getTotalCount() === 0) {
                 alert("선택된 상품이 없습니다.");
@@ -350,9 +350,9 @@ const check = {
             if (drink.count === 0) {
                 return false;
             }
-        } else if (type === "get") {
+        } else if (type === "sell") {
             // 같은 종류의 아이템을 구매했었는지 확인
-            if (drink.get !== 0) {
+            if (drink.sell !== 0) {
                 return false;
             }
         }
@@ -553,7 +553,7 @@ function addDispenserList() {
         // 선택된 아이템이 있는지 확인
         if (!check.count("add", drink)) {
             // 이미 구매한 같은 종류의 아이템이 있는지 확인
-            if (check.selectCount("get", drink)) {
+            if (check.selectCount("sell", drink)) {
                 const getItem = document.createElement("li");
                 const getItemButton = document.createElement("button");
 
@@ -570,7 +570,7 @@ function addDispenserList() {
             } else {
                 const itemCount = document.querySelector(`.${drink.name}-get>span`);
                 itemCount.textContent = "";
-                itemCount.insertAdjacentText("beforeend", `${drink.get + drink.count}`);
+                itemCount.insertAdjacentText("beforeend", `${drink.sell + drink.count}`);
             }
         }
     });
@@ -582,7 +582,7 @@ const getItemsButton = document.getElementById("get_button");
 function getButton() {
     getItemsButton.addEventListener("click", () => {
         if (check.payment()) {
-            if (check.totalCount("get")) {
+            if (check.totalCount("sell")) {
                 cal.totalPayment(); // 구매 총액에 가격 총액 합산
 
                 addDispenserList(); // 구매 목록 생성
