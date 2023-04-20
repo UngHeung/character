@@ -64,7 +64,7 @@ function itemInfo(itemName) {
     return drink[0];
 }
 
-let changeItemInfo = function (type, drink, value) {
+const changeItemInfo = function (type, drink, value) {
     if (type === "stock") {
         drink.stock = value;
     } else if (type === "count") {
@@ -411,7 +411,7 @@ const reset = {
 /* 메뉴 목록 생성 */
 const menuList = document.querySelector(".items-list");
 
-function makeMenuList() {
+const makeMenuList = (() => {
     items.forEach((drink) => {
         const item = document.createElement("li");
         const button = document.createElement("button");
@@ -433,15 +433,13 @@ function makeMenuList() {
         item.appendChild(button);
         menuList.appendChild(item);
     });
-}
-
-makeMenuList();
+})();
 
 /* 입금 */
 const insertInput = document.getElementById("insert_input");
 const insertButton = document.getElementById("insert_button");
 
-function slotInsertButton() {
+const slotInsertButton = (() => {
     insertButton.addEventListener("click", () => {
         const money = parseInt(insertInput.value);
         if (check.wallet()) {
@@ -456,14 +454,12 @@ function slotInsertButton() {
         }
         insertInput.value = ""; // 입금 후 input 값 초기화
     });
-}
-
-slotInsertButton();
+})();
 
 /* 거스름돈 반환 버튼 */
 const changeButton = document.getElementById("change_button");
 
-function slotChangeButton() {
+const slotChangeButton = (() => {
     changeButton.addEventListener("click", () => {
         if (check.totalCount("change")) {
             if (check.change()) {
@@ -475,14 +471,12 @@ function slotChangeButton() {
             }
         }
     });
-}
-
-slotChangeButton();
+})();
 
 /* 메뉴 아이템 버튼 이벤트 추가 */
 const menuItem = document.querySelectorAll(".in-stock");
 
-function selectMenuButton() {
+const selectMenuButton = (() => {
     menuItem.forEach((item) => {
         item.addEventListener("click", () => {
             const drink = itemInfo(item.value);
@@ -502,9 +496,7 @@ function selectMenuButton() {
             }
         });
     });
-}
-
-selectMenuButton();
+})();
 
 /* 선택된 아이템 목록 */
 const selectList = document.querySelector(".select-list");
